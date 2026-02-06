@@ -1,0 +1,207 @@
+version: '3.8'
+
+services:
+  # ========== Infrastructure ==========
+
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: kilat-postgres
+    environment:
+      POSTGRES_USER: kilat
+      POSTGRES_PASSWORD: kilat_secret
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/init-databases.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kilat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kilat-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: kilat-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - kilat-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kilat-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 3
+    networks:
+      - kilat-network
+
+  # ========== Services ==========
+
+  service-identity:
+    build:
+      context: .
+      dockerfile: service-identity/Dockerfile
+    container_name: kilat-identity
+    ports:
+      - "8004:8004"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: kilat_identity
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      SERVICE_PORT: 8004
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kilat-network
+
+  service-runner:
+    build:
+      context: .
+      dockerfile: service-runner/Dockerfile
+    container_name: kilat-runner
+    ports:
+      - "8003:8003"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: kilat_runner
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SERVICE_PORT: 8003
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
+  service-booking:
+    build:
+      context: .
+      dockerfile: service-booking/Dockerfile
+    container_name: kilat-booking
+    ports:
+      - "8001:8001"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: kilat_booking
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SERVICE_PORT: 8001
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      service-identity:
+        condition: service_started
+    networks:
+      - kilat-network
+
+  service-payment:
+    build:
+      context: .
+      dockerfile: service-payment/Dockerfile
+    container_name: kilat-payment
+    ports:
+      - "8002:8002"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: kilat_payment
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      STRIPE_SECRET_KEY: sk_test_placeholder
+      STRIPE_WEBHOOK_SECRET: whsec_placeholder
+      SERVICE_PORT: 8002
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
+  service-tracking:
+    build:
+      context: .
+      dockerfile: service-tracking/Dockerfile
+    container_name: kilat-tracking
+    ports:
+      - "8005:8005"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: kilat_tracking
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SERVICE_PORT: 8005
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
+volumes:
+  pgdata:
+
+networks:
+  kilat-network:
+    driver: bridge
