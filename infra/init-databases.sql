@@ -7,6 +7,7 @@ CREATE DATABASE kilat_payment;
 CREATE DATABASE kilat_runner;
 CREATE DATABASE kilat_identity;
 CREATE DATABASE kilat_tracking;
+CREATE DATABASE kilat_notification;
 
 -- Enable extensions in each database
 
@@ -26,4 +27,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 \c kilat_tracking
 CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+\c kilat_notification
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

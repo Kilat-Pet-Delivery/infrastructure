@@ -200,6 +200,46 @@ services:
     networks:
       - kilat-network
 
+  service-notification:
+    build:
+      context: .
+      dockerfile: service-notification/Dockerfile
+    container_name: kilat-notification
+    ports:
+      - "8006:8006"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: kilat_notification
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SERVICE_PORT: 8006
+      APP_ENV: development
+      TEMPLATES_DIR: /app/templates
+      FCM_SERVER_KEY: mock-fcm-key
+      FCM_PROJECT_ID: kilat-pet-runner
+      TWILIO_ACCOUNT_SID: mock-twilio-sid
+      TWILIO_AUTH_TOKEN: mock-twilio-token
+      TWILIO_FROM_NUMBER: "+60123456789"
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USERNAME: dev@kilat.com
+      SMTP_PASSWORD: dev-password
+      SMTP_FROM_ADDR: noreply@kilat.com
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
   # ========== API Gateway ==========
 
   api-gateway:
@@ -216,6 +256,7 @@ services:
       UPSTREAM_BOOKING: http://service-booking:8001
       UPSTREAM_PAYMENT: http://service-payment:8002
       UPSTREAM_TRACKING: http://service-tracking:8005
+      UPSTREAM_NOTIFICATION: http://service-notification:8006
       RATE_LIMIT_PER_MIN: 200
       APP_ENV: development
     depends_on:
@@ -224,6 +265,7 @@ services:
       - service-booking
       - service-payment
       - service-tracking
+      - service-notification
     networks:
       - kilat-network
 
