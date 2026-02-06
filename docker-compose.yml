@@ -200,6 +200,33 @@ services:
     networks:
       - kilat-network
 
+  # ========== API Gateway ==========
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: kilat-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      GATEWAY_PORT: 8080
+      UPSTREAM_IDENTITY: http://service-identity:8004
+      UPSTREAM_RUNNER: http://service-runner:8003
+      UPSTREAM_BOOKING: http://service-booking:8001
+      UPSTREAM_PAYMENT: http://service-payment:8002
+      UPSTREAM_TRACKING: http://service-tracking:8005
+      RATE_LIMIT_PER_MIN: 200
+      APP_ENV: development
+    depends_on:
+      - service-identity
+      - service-runner
+      - service-booking
+      - service-payment
+      - service-tracking
+    networks:
+      - kilat-network
+
 volumes:
   pgdata:
 

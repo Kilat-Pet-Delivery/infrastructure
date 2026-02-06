@@ -1,6 +1,6 @@
 .PHONY: all build test lint docker-up docker-down migrate-up
 
-SERVICES = service-booking service-payment service-runner service-identity service-tracking
+SERVICES = service-booking service-payment service-runner service-identity service-tracking api-gateway
 
 build:
 	@for %%s in ($(SERVICES)) do ( \
@@ -30,3 +30,4 @@ tidy:
 	)
 	cd lib-common && go mod tidy && cd ..
 	cd lib-proto && go mod tidy && cd ..
+	cd api-gateway && go mod tidy && cd ..
