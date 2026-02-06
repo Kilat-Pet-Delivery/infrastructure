@@ -1,4 +1,4 @@
-.PHONY: all build test lint docker-up docker-down migrate-up
+.PHONY: all build test test-integration lint docker-up docker-down migrate-up
 
 SERVICES = service-booking service-payment service-runner service-identity service-tracking api-gateway
 
@@ -13,6 +13,10 @@ test:
 		echo Testing %%s... && \
 		cd %%s && go test ./... -v && cd .. \
 	)
+
+test-integration:
+	cd service-payment && go test -tags=integration -v -timeout 120s -count=1 .
+	cd service-booking && go test -tags=integration -v -timeout 120s -count=1 .
 
 docker-up:
 	docker-compose up -d --build
