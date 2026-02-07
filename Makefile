@@ -1,6 +1,6 @@
 .PHONY: all build test test-integration lint docker-up docker-down migrate-up
 
-SERVICES = service-booking service-payment service-runner service-identity service-tracking api-gateway
+SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification api-gateway
 
 build:
 	@for %%s in ($(SERVICES)) do ( \
