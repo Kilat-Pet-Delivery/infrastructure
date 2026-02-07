@@ -56,7 +56,7 @@ services:
 
   service-identity:
     build:
-      context: .
+      context: ..
       dockerfile: service-identity/Dockerfile
     container_name: kilat-identity
     ports:
@@ -81,7 +81,7 @@ services:
 
   service-runner:
     build:
-      context: .
+      context: ..
       dockerfile: service-runner/Dockerfile
     container_name: kilat-runner
     ports:
@@ -110,7 +110,7 @@ services:
 
   service-booking:
     build:
-      context: .
+      context: ..
       dockerfile: service-booking/Dockerfile
     container_name: kilat-booking
     ports:
@@ -141,7 +141,7 @@ services:
 
   service-payment:
     build:
-      context: .
+      context: ..
       dockerfile: service-payment/Dockerfile
     container_name: kilat-payment
     ports:
@@ -173,7 +173,7 @@ services:
 
   service-tracking:
     build:
-      context: .
+      context: ..
       dockerfile: service-tracking/Dockerfile
     container_name: kilat-tracking
     ports:
@@ -202,7 +202,7 @@ services:
 
   service-notification:
     build:
-      context: .
+      context: ..
       dockerfile: service-notification/Dockerfile
     container_name: kilat-notification
     ports:
@@ -244,7 +244,7 @@ services:
 
   api-gateway:
     build:
-      context: .
+      context: ..
       dockerfile: api-gateway/Dockerfile
     container_name: kilat-gateway
     ports:
