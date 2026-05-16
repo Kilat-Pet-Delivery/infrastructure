@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: kilat
       POSTGRES_PASSWORD: kilat_secret
     ports:
-      - "5433:5432"
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./infra/init-databases.sql:/docker-entrypoint-initdb.d/01-init.sql

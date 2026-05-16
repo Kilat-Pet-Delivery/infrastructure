@@ -1,4 +1,4 @@
-.PHONY: all build test test-integration lint docker-up docker-down migrate-up
+.PHONY: all build test test-integration lint docker-up docker-down up down seed migrate-up
 
 SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification api-gateway
 
@@ -23,6 +23,13 @@ docker-up:
 
 docker-down:
 	docker-compose down -v
+
+up: docker-up
+
+down: docker-down
+
+seed:
+	docker exec -i kilat-postgres psql -U kilat -f - < seed/runner-test-user.sql
 
 docker-infra:
 	docker-compose up -d postgres zookeeper kafka
