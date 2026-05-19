@@ -1,28 +1,31 @@
-.PHONY: all build test test-integration lint docker-up docker-down up down seed migrate-up
+.PHONY: all build test test-integration lint docker-up docker-down up down seed seed-chat seed-zones seed-loyalty minio-init minio-prune docker-infra tidy
 
-SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification api-gateway
+COMPOSE ?= docker compose
+REPO_ROOT := $(abspath ..)
+SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification service-review api-gateway
+LIBS = lib-common lib-proto
 
 build:
-	@for %%s in ($(SERVICES)) do ( \
-		echo Building %%s... && \
-		cd %%s && go build -o server.exe ./cmd/server && cd .. \
-	)
+	@for s in $(SERVICES); do \
+		echo "Building $$s..."; \
+		(cd "$(REPO_ROOT)/$$s" && go build -o server ./cmd/server); \
+	done
 
 test:
-	@for %%s in ($(SERVICES)) do ( \
-		echo Testing %%s... && \
-		cd %%s && go test ./... -v && cd .. \
-	)
+	@for s in $(LIBS) $(SERVICES); do \
+		echo "Testing $$s..."; \
+		(cd "$(REPO_ROOT)/$$s" && go test ./... -v); \
+	done
 
 test-integration:
-	cd service-payment && go test -tags=integration -v -timeout 120s -count=1 .
-	cd service-booking && go test -tags=integration -v -timeout 120s -count=1 .
+	cd "$(REPO_ROOT)/service-payment" && go test -tags=integration -v -timeout 120s -count=1 .
+	cd "$(REPO_ROOT)/service-booking" && go test -tags=integration -v -timeout 120s -count=1 .
 
 docker-up:
-	docker-compose up -d --build
+	$(COMPOSE) up -d --build
 
 docker-down:
-	docker-compose down -v
+	$(COMPOSE) down -v
 
 up: docker-up
 
@@ -31,14 +34,27 @@ down: docker-down
 seed:
 	docker exec -i kilat-postgres psql -U kilat -f - < seed/runner-test-user.sql
 
+seed-chat:
+	@echo "service-chat seed data lands with Phase 1."
+
+seed-zones:
+	@echo "service-zones polygon seed data lands with Phase 9."
+
+seed-loyalty:
+	@echo "service-loyalty quest seed data lands with Phase 6."
+
+minio-init:
+	$(COMPOSE) run --rm minio-init
+
+minio-prune:
+	$(COMPOSE) down
+	docker volume rm infrastructure_miniodata 2>/dev/null || true
+
 docker-infra:
-	docker-compose up -d postgres zookeeper kafka
+	$(COMPOSE) up -d postgres zookeeper kafka minio
 
 tidy:
-	@for %%s in ($(SERVICES)) do ( \
-		echo Tidying %%s... && \
-		cd %%s && go mod tidy && cd .. \
-	)
-	cd lib-common && go mod tidy && cd ..
-	cd lib-proto && go mod tidy && cd ..
-	cd api-gateway && go mod tidy && cd ..
+	@for s in $(LIBS) $(SERVICES); do \
+		echo "Tidying $$s..."; \
+		(cd "$(REPO_ROOT)/$$s" && go mod tidy); \
+	done

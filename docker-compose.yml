@@ -52,6 +52,33 @@ services:
     networks:
       - kilat-network
 
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    container_name: kilat-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - miniodata:/data
+    networks:
+      - kilat-network
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    container_name: kilat-minio-init
+    depends_on:
+      - minio
+    entrypoint:
+      - /bin/sh
+      - -c
+      - until mc alias set local http://minio:9000 minioadmin minioadmin; do sleep 1; done; mc mb --ignore-existing local/kilat-runner
+    networks:
+      - kilat-network
+
   # ========== Services ==========
 
   service-identity:
@@ -269,6 +296,117 @@ services:
     networks:
       - kilat-network
 
+  service-chat:
+    image: alpine:3.20
+    container_name: kilat-chat
+    command: ["sh", "-c", "echo service-chat stub ready; exit 0"]
+    ports:
+      - "8008:8008"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: service_chat
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: kilat-runner
+      SERVICE_PORT: 8008
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      minio:
+        condition: service_started
+    networks:
+      - kilat-network
+
+  service-incident:
+    image: alpine:3.20
+    container_name: kilat-incident
+    command: ["sh", "-c", "echo service-incident stub ready; exit 0"]
+    ports:
+      - "8009:8009"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: service_incident
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SUPPORT_AGENT_USER_IDS: ""
+      SERVICE_PORT: 8009
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
+  service-loyalty:
+    image: alpine:3.20
+    container_name: kilat-loyalty
+    command: ["sh", "-c", "echo service-loyalty stub ready; exit 0"]
+    ports:
+      - "8010:8010"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: service_loyalty
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SERVICE_PORT: 8010
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
+  service-zones:
+    image: alpine:3.20
+    container_name: kilat-zones
+    command: ["sh", "-c", "echo service-zones stub ready; exit 0"]
+    ports:
+      - "8011:8011"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: service_zones
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SERVICE_PORT: 8011
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
   # ========== API Gateway ==========
 
   api-gateway:
@@ -287,6 +425,10 @@ services:
       UPSTREAM_TRACKING: http://service-tracking:8005
       UPSTREAM_NOTIFICATION: http://service-notification:8006
       UPSTREAM_REVIEW: http://service-review:8007
+      UPSTREAM_CHAT: http://service-chat:8008
+      UPSTREAM_INCIDENT: http://service-incident:8009
+      UPSTREAM_LOYALTY: http://service-loyalty:8010
+      UPSTREAM_ZONES: http://service-zones:8011
       RATE_LIMIT_PER_MIN: 200
       APP_ENV: development
     depends_on:
@@ -297,11 +439,16 @@ services:
       - service-tracking
       - service-notification
       - service-review
+      - service-chat
+      - service-incident
+      - service-loyalty
+      - service-zones
     networks:
       - kilat-network
 
 volumes:
   pgdata:
+  miniodata:
 
 networks:
   kilat-network:
