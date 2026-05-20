@@ -2,7 +2,7 @@
 
 COMPOSE ?= docker compose
 REPO_ROOT := $(abspath ..)
-SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification service-review api-gateway
+SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification service-review service-chat api-gateway
 LIBS = lib-common lib-proto
 
 build:
