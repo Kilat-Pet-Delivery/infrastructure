@@ -359,9 +359,10 @@ services:
       - kilat-network
 
   service-loyalty:
-    image: alpine:3.20
+    build:
+      context: ..
+      dockerfile: service-loyalty/Dockerfile
     container_name: kilat-loyalty
-    command: ["sh", "-c", "echo service-loyalty stub ready; exit 0"]
     ports:
       - "8010:8010"
     environment:

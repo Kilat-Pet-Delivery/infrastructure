@@ -2,7 +2,7 @@
 
 COMPOSE ?= docker compose
 REPO_ROOT := $(abspath ..)
-SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification service-review service-chat service-incident api-gateway
+SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification service-review service-chat service-incident service-loyalty api-gateway
 LIBS = lib-common lib-proto
 
 build:
@@ -41,7 +41,7 @@ seed-zones:
 	@echo "service-zones polygon seed data lands with Phase 9."
 
 seed-loyalty:
-	@echo "service-loyalty quest seed data lands with Phase 6."
+	@echo "service-loyalty seeds quest definitions on startup in development."
 
 minio-init:
 	$(COMPOSE) run --rm minio-init
