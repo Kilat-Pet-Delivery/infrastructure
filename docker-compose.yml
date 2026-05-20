@@ -428,6 +428,12 @@ services:
       UPSTREAM_INCIDENT: http://service-incident:8009
       UPSTREAM_LOYALTY: http://service-loyalty:8010
       UPSTREAM_ZONES: http://service-zones:8011
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      GATEWAY_ID: local-gateway-1
       RATE_LIMIT_PER_MIN: 200
       APP_ENV: development
     depends_on:
