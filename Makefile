@@ -2,7 +2,7 @@
 
 COMPOSE ?= docker compose
 REPO_ROOT := $(abspath ..)
-SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification service-review service-chat service-incident service-loyalty api-gateway
+SERVICES = service-booking service-payment service-runner service-identity service-tracking service-notification service-review service-chat service-incident service-loyalty service-zones api-gateway
 LIBS = lib-common lib-proto
 
 build:
@@ -38,7 +38,7 @@ seed-chat:
 	@echo "service-chat seed data lands with Phase 1."
 
 seed-zones:
-	@echo "service-zones polygon seed data lands with Phase 9."
+	@echo "service-zones seeds KL zone polygons through its startup migrations."
 
 seed-loyalty:
 	@echo "service-loyalty seeds quest definitions on startup in development."

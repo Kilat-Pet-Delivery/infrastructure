@@ -386,9 +386,10 @@ services:
       - kilat-network
 
   service-zones:
-    image: alpine:3.20
+    build:
+      context: ..
+      dockerfile: service-zones/Dockerfile
     container_name: kilat-zones
-    command: ["sh", "-c", "echo service-zones stub ready; exit 0"]
     ports:
       - "8011:8011"
     environment:
