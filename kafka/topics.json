@@ -1,0 +1,54 @@
+{
+  "$comment": "Declarative Kafka topic registry. The dev stack still has KAFKA_AUTO_CREATE_TOPICS_ENABLE=true so missing topics auto-create with KAFKA_NUM_PARTITIONS=3 defaults. This file is the source of truth for non-default settings (partition count, retention) consumed by the bootstrap script that ships in a later phase. Entries are sorted by topic name.",
+  "topics": [
+    {
+      "name": "booking.events",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "comment": "7-day retention. Partition key is booking_id."
+    },
+    {
+      "name": "chat.events",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "comment": "7-day retention. Partition key is thread_id."
+    },
+    {
+      "name": "inventory.events",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "comment": "7-day retention. Partition key is product_id so per-product ordering is preserved (matters for the optimistic-lock invariant)."
+    },
+    {
+      "name": "payment.events",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 1209600000,
+      "comment": "14-day retention; money-events warrant a longer audit window. Partition key is payment_id (or withdrawal_id for shop withdrawals)."
+    },
+    {
+      "name": "runner.events",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "comment": "7-day retention. Partition key is runner_id."
+    },
+    {
+      "name": "shop.events",
+      "partitions": 12,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "comment": "7-day retention. Partition key is shop_id; doubled partition count vs other domains to absorb merchant-side fan-out (status flips, staff invites, sales aggregates) without head-of-line blocking."
+    },
+    {
+      "name": "tracking.events",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "comment": "7-day retention. Partition key is booking_id."
+    }
+  ]
+}

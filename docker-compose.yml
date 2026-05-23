@@ -269,6 +269,42 @@ services:
     networks:
       - kilat-network
 
+  # service-shop is wired into docker-compose now (Plan C Phase 0) so the
+  # container picks up env wiring + database dependencies as soon as
+  # service-shop/Dockerfile lands in Plan C Phase 1. Until then,
+  # `docker compose up service-shop` will fail to build (expected); the
+  # rest of the stack still composes and runs.
+  service-shop:
+    profiles:
+      - shop
+    build:
+      context: ..
+      dockerfile: service-shop/Dockerfile
+    container_name: kilat-shop
+    ports:
+      - "8012:8012"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kilat
+      DB_PASSWORD: kilat_secret
+      DB_NAME: kilat_shop
+      DB_SSL_MODE: disable
+      JWT_SECRET: super-secret-jwt-key-change-me
+      JWT_ACCESS_EXPIRY: 15m
+      JWT_REFRESH_EXPIRY: 168h
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_GROUP_PREFIX: kilat
+      SERVICE_PORT: 8012
+      APP_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - kilat-network
+
   # ========== API Gateway ==========
 
   api-gateway:
@@ -287,6 +323,7 @@ services:
       UPSTREAM_TRACKING: http://service-tracking:8005
       UPSTREAM_NOTIFICATION: http://service-notification:8006
       UPSTREAM_REVIEW: http://service-review:8007
+      UPSTREAM_SHOP: http://service-shop:8012
       RATE_LIMIT_PER_MIN: 200
       APP_ENV: development
     depends_on:
