@@ -1,0 +1,24 @@
+meta {
+  name: Create Incident
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/incidents
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {
+    "type": "sos",
+    "severity": "high",
+    "booking_id": "{{bookingId}}",
+    "notes": "Need support from smoke test"
+  }
+}

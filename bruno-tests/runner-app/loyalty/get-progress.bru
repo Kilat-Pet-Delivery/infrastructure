@@ -1,0 +1,15 @@
+meta {
+  name: Get Quest Progress
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/quests/{{questId}}/progress
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}

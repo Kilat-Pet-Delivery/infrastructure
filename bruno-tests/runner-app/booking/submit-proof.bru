@@ -1,0 +1,24 @@
+meta {
+  name: Submit Proof
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/proof
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {
+    "photo_url": "https://example.test/proof.jpg",
+    "signature_url": "https://example.test/signature.png",
+    "recipient_kind": "owner",
+    "notes": "Pet delivered safely"
+  }
+}

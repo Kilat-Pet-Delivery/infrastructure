@@ -1,0 +1,21 @@
+meta {
+  name: Cancel Active Delivery
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/cancel-active
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {
+    "reason": "Smoke test cancellation"
+  }
+}

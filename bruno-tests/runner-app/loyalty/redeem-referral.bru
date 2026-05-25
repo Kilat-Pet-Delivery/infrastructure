@@ -1,0 +1,19 @@
+meta {
+  name: Redeem Referral
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/referrals/{{referralId}}/redeem
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {}
+}

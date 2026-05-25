@@ -1,0 +1,15 @@
+meta {
+  name: List Referrals
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/referrals
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}

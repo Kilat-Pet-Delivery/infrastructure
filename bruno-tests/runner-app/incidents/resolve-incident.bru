@@ -1,0 +1,21 @@
+meta {
+  name: Resolve Incident
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/incidents/{{incidentId}}/resolve
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{agentToken}}
+}
+
+body:json {
+  {
+    "resolution": "Smoke test resolved"
+  }
+}

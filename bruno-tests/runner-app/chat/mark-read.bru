@@ -1,0 +1,21 @@
+meta {
+  name: Mark Read
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/threads/{{threadId}}/read
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {
+    "message_id": "{{messageId}}"
+  }
+}

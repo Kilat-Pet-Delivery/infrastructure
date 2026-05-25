@@ -1,0 +1,19 @@
+meta {
+  name: Upload Photo
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/me/photo
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:multipart-form {
+  photo: @file({{photoPath}})
+}

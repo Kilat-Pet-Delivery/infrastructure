@@ -1,0 +1,21 @@
+meta {
+  name: Assign Incident
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/incidents/{{incidentId}}/assign
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{agentToken}}
+}
+
+body:json {
+  {
+    "assignee_user_id": "{{assigneeUserId}}"
+  }
+}

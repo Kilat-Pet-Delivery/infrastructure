@@ -1,0 +1,24 @@
+meta {
+  name: Add Bank Account
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bank-accounts
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {
+    "bank_name": "Maybank",
+    "account_number": "123456789012",
+    "account_holder_name": "Test Runner",
+    "is_default": true
+  }
+}

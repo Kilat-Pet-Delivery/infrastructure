@@ -1,0 +1,20 @@
+meta {
+  name: Send Attachment
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/threads/{{threadId}}/attachments
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:multipart-form {
+  file: @file({{photoPath}})
+  caption: Delivery photo
+}

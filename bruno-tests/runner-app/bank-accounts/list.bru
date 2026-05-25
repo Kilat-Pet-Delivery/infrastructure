@@ -1,0 +1,15 @@
+meta {
+  name: List Bank Accounts
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/bank-accounts
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}

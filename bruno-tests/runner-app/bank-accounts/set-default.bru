@@ -1,0 +1,19 @@
+meta {
+  name: Set Default Bank Account
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bank-accounts/{{bankAccountId}}/default
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {}
+}

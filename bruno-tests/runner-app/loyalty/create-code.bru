@@ -1,0 +1,19 @@
+meta {
+  name: Create Referral Code
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/referrals/code
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {}
+}

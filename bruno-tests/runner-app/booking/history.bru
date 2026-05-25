@@ -1,0 +1,15 @@
+meta {
+  name: Booking History
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/bookings/history
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}

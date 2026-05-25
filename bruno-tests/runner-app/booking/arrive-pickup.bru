@@ -1,0 +1,21 @@
+meta {
+  name: Arrive Pickup
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/arrive-pickup
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}
+
+body:json {
+  {
+    "qr_code": "smoke-qr"
+  }
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Transition Incident
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/incidents/{{incidentId}}/transition
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{agentToken}}
+}
+
+body:json {
+  {
+    "status": "in_progress",
+    "notes": "Agent is handling this incident"
+  }
+}
