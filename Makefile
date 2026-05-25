@@ -1,4 +1,4 @@
-.PHONY: all build test test-integration lint docker-up docker-down up down seed seed-chat seed-zones seed-loyalty minio-init minio-prune docker-infra tidy
+.PHONY: all build test test-integration integration-up integration-test integration-test-fast integration-down lint docker-up docker-down up down seed seed-chat seed-zones seed-loyalty minio-init minio-prune docker-infra tidy
 
 COMPOSE ?= docker compose
 REPO_ROOT := $(abspath ..)
@@ -20,6 +20,19 @@ test:
 test-integration:
 	cd "$(REPO_ROOT)/service-payment" && go test -tags=integration -v -timeout 120s -count=1 .
 	cd "$(REPO_ROOT)/service-booking" && go test -tags=integration -v -timeout 120s -count=1 .
+
+integration-up:
+	$(COMPOSE) up -d --build
+	$(COMPOSE) run --rm minio-init
+
+integration-test:
+	cd tests/integration && KILAT_RUN_INTEGRATION=1 go test -v -timeout 30m -count=1 ./...
+
+integration-test-fast:
+	cd tests/integration && go test -v -timeout 2m -count=1 ./...
+
+integration-down:
+	$(COMPOSE) down -v
 
 docker-up:
 	$(COMPOSE) up -d --build

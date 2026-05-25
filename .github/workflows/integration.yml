@@ -1,0 +1,68 @@
+name: Cross-Service Integration
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * *"
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out infrastructure
+        uses: actions/checkout@v4
+        with:
+          path: infrastructure
+
+      - name: Check out service repositories
+        run: |
+          set -euo pipefail
+          for repo in \
+            lib-common \
+            lib-proto \
+            service-identity \
+            service-runner \
+            service-booking \
+            service-payment \
+            service-tracking \
+            service-notification \
+            service-review \
+            service-chat \
+            service-incident \
+            service-loyalty \
+            service-zones \
+            api-gateway
+          do
+            git clone --depth 1 "https://github.com/Kilat-Pet-Delivery/${repo}.git" "${repo}"
+          done
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+
+      - name: Start docker-compose stack
+        working-directory: infrastructure
+        run: make integration-up
+
+      - name: Seed smoke users
+        working-directory: infrastructure
+        run: make seed
+
+      - name: Run integration suite
+        working-directory: infrastructure
+        env:
+          KILAT_RUN_INTEGRATION: "1"
+          KILAT_SURGE_FIXTURE_READY: "1"
+        run: make integration-test
+
+      - name: Dump logs on failure
+        if: failure()
+        working-directory: infrastructure
+        run: docker compose logs --no-color
+
+      - name: Stop stack
+        if: always()
+        working-directory: infrastructure
+        run: make integration-down
