@@ -1,0 +1,19 @@
+meta {
+  name: Accept Invite
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/staff-invites/accept
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{staffToken}}
+}
+
+body:json {
+  { "token": "{{inviteToken}}" }
+}

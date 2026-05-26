@@ -1,0 +1,14 @@
+meta {
+  name: Get Analytics
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/analytics?period=day
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}

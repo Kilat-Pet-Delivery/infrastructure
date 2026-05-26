@@ -1,0 +1,19 @@
+meta {
+  name: Update Product
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/products/{{productId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}
+
+body:json {
+  { "price_cents": 1350 }
+}

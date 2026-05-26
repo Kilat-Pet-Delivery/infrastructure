@@ -1,0 +1,14 @@
+meta {
+  name: Top Products
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/analytics/top-products?period=day
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Daily Cap
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/payments/shops/{{shopId}}/withdrawals
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-cap
+}
+auth:bearer {
+  token: {{ownerToken}}
+}
+body:json {
+  { "amount_myr_cents": 200000000, "bank_account_id": "{{bankAccountId}}" }
+}

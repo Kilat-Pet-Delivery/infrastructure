@@ -1,0 +1,21 @@
+meta {
+  name: Wrong State 409
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/shop-accept
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-wrong-state
+}
+auth:bearer {
+  token: {{ownerToken}}
+}
+body:json {
+  { "shop_id": "{{shopId}}" }
+}

@@ -1,0 +1,14 @@
+meta {
+  name: Wallet Credited
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/v1/payments/shops/{{shopId}}/wallet
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}

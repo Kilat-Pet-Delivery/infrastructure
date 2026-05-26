@@ -1,0 +1,21 @@
+meta {
+  name: Insufficient Funds
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/payments/shops/{{shopId}}/withdrawals
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-too-much
+}
+auth:bearer {
+  token: {{ownerToken}}
+}
+body:json {
+  { "amount_myr_cents": 999999999, "bank_account_id": "{{bankAccountId}}" }
+}

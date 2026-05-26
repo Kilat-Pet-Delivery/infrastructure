@@ -1,0 +1,21 @@
+meta {
+  name: Shop Preparing
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/shop-preparing
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-preparing
+}
+auth:bearer {
+  token: {{ownerToken}}
+}
+body:json {
+  { "shop_id": "{{shopId}}" }
+}

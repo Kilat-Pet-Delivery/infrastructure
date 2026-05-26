@@ -1,0 +1,19 @@
+meta {
+  name: Stale Version 409
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/products/{{productId}}/inventory
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}
+
+body:json {
+  { "quantity": 8, "reason": "adjustment", "expected_version": 0 }
+}

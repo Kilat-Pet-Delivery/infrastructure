@@ -1,0 +1,27 @@
+meta {
+  name: Create Shop
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/shops
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}
+
+body:json {
+  {
+    "name": "Kilat Pet Supplies Smoke",
+    "slug": "kilat-pet-supplies-smoke",
+    "address": "1 Jalan Test, Kuala Lumpur",
+    "latitude": 3.139,
+    "longitude": 101.6869,
+    "phone": "+60123456789",
+    "category": "supplies"
+  }
+}

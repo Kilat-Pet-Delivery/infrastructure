@@ -1,0 +1,14 @@
+meta {
+  name: Inventory Movements
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/products/{{productId}}/movements
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}

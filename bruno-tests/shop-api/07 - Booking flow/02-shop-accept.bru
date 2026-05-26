@@ -1,0 +1,21 @@
+meta {
+  name: Shop Accept
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/shop-accept
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-accept
+}
+auth:bearer {
+  token: {{ownerToken}}
+}
+body:json {
+  { "shop_id": "{{shopId}}" }
+}

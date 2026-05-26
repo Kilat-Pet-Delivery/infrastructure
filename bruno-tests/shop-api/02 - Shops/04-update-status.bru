@@ -1,0 +1,19 @@
+meta {
+  name: Update Shop Status
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}
+
+body:json {
+  { "status": "open" }
+}

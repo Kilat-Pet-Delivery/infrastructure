@@ -1,0 +1,14 @@
+meta {
+  name: Get Wallet
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/payments/shops/{{shopId}}/wallet
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Adjust Inventory With Version
+  type: http
+  seq: 1
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/products/{{productId}}/inventory
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}
+
+body:json {
+  { "quantity": 10, "reason": "restock", "expected_version": 0 }
+}

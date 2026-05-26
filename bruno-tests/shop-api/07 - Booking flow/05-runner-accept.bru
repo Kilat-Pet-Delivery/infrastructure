@@ -1,0 +1,14 @@
+meta {
+  name: Runner Accept
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/accept
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{runnerToken}}
+}

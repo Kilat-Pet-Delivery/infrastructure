@@ -1,0 +1,21 @@
+meta {
+  name: Withdraw Pending
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/payments/shops/{{shopId}}/withdrawals
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-withdraw
+}
+auth:bearer {
+  token: {{ownerToken}}
+}
+body:json {
+  { "amount_myr_cents": 1000, "bank_account_id": "{{bankAccountId}}" }
+}

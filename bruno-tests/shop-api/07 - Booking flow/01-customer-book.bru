@@ -1,0 +1,25 @@
+meta {
+  name: Customer Book Shop Order
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{customerToken}}
+}
+
+body:json {
+  {
+    "shop_id": "{{shopId}}",
+    "pet_spec": { "pet_type": "cat", "name": "Milo", "weight_kg": 4 },
+    "pickup_address": { "line1": "Shop", "city": "KL", "state": "WP", "country": "MY", "latitude": 3.139, "longitude": 101.6869 },
+    "dropoff_address": { "line1": "Home", "city": "KL", "state": "WP", "country": "MY", "latitude": 3.15, "longitude": 101.71 },
+    "items": [{ "product_id": "{{productId}}", "qty": 1, "price_myr_cents": 1350, "sku": "SMOKE-CAT-FOOD", "name": "Smoke Cat Food" }]
+  }
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Stale QR 422
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/pickup
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-stale-qr
+}
+auth:bearer {
+  token: {{runnerToken}}
+}
+body:json {
+  { "qr_pickup_token": "stale-token" }
+}

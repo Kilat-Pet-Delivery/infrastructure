@@ -1,0 +1,25 @@
+meta {
+  name: Create Product
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/products
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}
+
+body:json {
+  {
+    "sku": "SMOKE-CAT-FOOD",
+    "name": "Smoke Cat Food",
+    "price_cents": 1250,
+    "currency": "MYR",
+    "category": "food"
+  }
+}

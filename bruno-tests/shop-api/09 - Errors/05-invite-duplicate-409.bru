@@ -1,0 +1,18 @@
+meta {
+  name: Invite Duplicate 409
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/shops/{{shopId}}/staff
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ownerToken}}
+}
+body:json {
+  { "email": "shop-staff-smoke@example.com", "role": "staff" }
+}

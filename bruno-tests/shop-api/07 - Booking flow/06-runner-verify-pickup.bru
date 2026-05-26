@@ -1,0 +1,21 @@
+meta {
+  name: Runner Verify Pickup
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bookings/{{bookingId}}/pickup
+  body: json
+  auth: bearer
+}
+
+headers {
+  Idempotency-Key: {{idempotencyKey}}-pickup
+}
+auth:bearer {
+  token: {{runnerToken}}
+}
+body:json {
+  { "qr_pickup_token": "{{qrPickupToken}}" }
+}
