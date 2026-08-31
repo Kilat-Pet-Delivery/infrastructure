@@ -45,6 +45,59 @@ docker-compose up -d
 - **Apache Kafka** via Confluent (port 9092) — Event streaming and message broker
 - **Zookeeper** (port 2181) — Distributed coordination service
 
+## The two ways to run
+
+There are exactly two supported setups. Mixing them is what causes port clashes and
+"connection refused" against the wrong Postgres.
+
+### 1. Daily loop — shared stack + `go run`
+
+What you want almost always. The data stores come from the shared dev-infra stack; the Go
+services run from source on the host, so a change is one `go run` away.
+
+```bash
+cd ~/Documents/dev-infra && ./dev.ps1 up kilat   # Postgres+PostGIS, Kafka, Redis, MinIO, Mailpit
+cd ~/Documents/kilat-pet-delivery/service-identity
+cp .env.example .env                              # already points at localhost
+go run ./cmd/migrate                              # apply this service's schema
+go run ./cmd/server
+```
+
+Every service repo ships a `.env.example` already pointed at the shared stack —
+`DB_HOST=localhost`, `DB_PORT=5432`, `KAFKA_BROKERS=localhost:9092`. Copy it to `.env` and
+edit only what you actually need. `.env` is gitignored in every repo; never commit one.
+
+`JWT_SECRET` must be **identical** across the gateway and every service, or tokens issued by
+`service-identity` are rejected everywhere else.
+
+Step-by-step, including a working `register → login → create booking` smoke test:
+[`docs/run-from-source.md`](docs/run-from-source.md).
+
+### 2. Full-stack smoke — `docker-compose.yml` in this repo
+
+Everything in containers, for checking the whole platform end to end rather than iterating.
+
+```bash
+cd ~/Documents/kilat-pet-delivery/infrastructure
+cp .env.example .env
+make up
+```
+
+**Stop the shared stack first** — this compose file publishes its own Postgres and Kafka and
+will fight the shared one for ports. Note the difference: this file uses Postgres on **5433**
+and hostnames like `db` and `service-identity`, where the daily loop uses **5432** on
+`localhost`. That is the single biggest source of confusion between the two modes.
+
+### Ports, and why yours may not bind
+
+The documented service ports are 8001–8007 plus 8012 and the gateway on 8080. On the shared
+development laptop the Desa Murni Batik services already occupy 8001–8009, and Docker holds
+8080. Whichever product starts second fails with
+`Only one usage of each socket address (protocol/network address/port) is normally permitted`.
+
+Until **KPD-65** settles a permanent split, override per service — `SERVICE_PORT=18004`,
+`GATEWAY_PORT=18080`. Every port is environment-driven, so nothing in code needs editing.
+
 ## Configuration
 
 Copy `.env.example` to `.env` and adjust environment variables for your deployment:
