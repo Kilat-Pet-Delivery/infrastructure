@@ -59,7 +59,7 @@ services run from source on the host, so a change is one `go run` away.
 cd ~/Documents/dev-infra && ./dev.ps1 up kilat   # Postgres+PostGIS, Kafka, Redis, MinIO, Mailpit
 cd ~/Documents/kilat-pet-delivery/service-identity
 cp .env.example .env                              # already points at localhost
-go run ./cmd/migrate                              # apply this service's schema
+go run ./cmd/migrate                              # optional: cmd/server applies the same migrations at startup
 go run ./cmd/server
 ```
 
@@ -67,8 +67,9 @@ Every service repo ships a `.env.example` already pointed at the shared stack �
 `DB_HOST=localhost`, `DB_PORT=5432`, `KAFKA_BROKERS=localhost:9092`. Copy it to `.env` and
 edit only what you actually need. `.env` is gitignored in every repo; never commit one.
 
-`JWT_SECRET` must be **identical** across the gateway and every service, or tokens issued by
-`service-identity` are rejected everywhere else.
+`JWT_SECRET` must be **identical** in every service, or tokens issued by `service-identity` are
+rejected by the others. The gateway does not read it: it only proxies, and each service checks
+the token itself.
 
 Step-by-step, including a working `register → login → create booking` smoke test:
 [`docs/run-from-source.md`](docs/run-from-source.md).
